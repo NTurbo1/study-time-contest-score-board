@@ -9,9 +9,13 @@ export const StateContext = createContext()
 
 const App = () => {
 
-    const [shokhaStudyTime, setShokhaStudyTime] = useState('')
-    const [toreStudyTime, setToreStudyTime] = useState('')   
-    const [nurboStudyTime, setNurboStudyTime] = useState('')
+    const shokha_study_time = localStorage.getItem('shokha_study_time')
+    const tore_study_time = localStorage.getItem('tore_study_time')
+    const nurbo_study_time = localStorage.getItem('nurbo_study_time')
+
+    const [shokhaStudyTime, setShokhaStudyTime] = useState(`${Math.floor(shokha_study_time / 60)} hs ${shokha_study_time % 60} mins`)
+    const [toreStudyTime, setToreStudyTime] = useState(`${Math.floor(tore_study_time / 60)} hs ${tore_study_time % 60} mins`)   
+    const [nurboStudyTime, setNurboStudyTime] = useState(`${Math.floor(nurbo_study_time / 60)} hs ${nurbo_study_time % 60} mins`)
     
     
     useEffect(() => {
