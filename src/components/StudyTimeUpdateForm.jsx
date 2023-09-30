@@ -1,16 +1,37 @@
 import React, { useContext, useState } from 'react';
 import { StateContext } from '../App';
+import { updateLocalStorageScores } from '../utils/LocalStorageScores';
+import { setAllReportsFalse, setAllStudyTimesEmpty } from '../utils/StudyTime';
 
 const StudyTimeUpdateForm = () => {
 
-    const { shokha_study_time, tore_study_time, nurbo_study_time} = useContext(StateContext)
+    const { 
+        shokha_study_time, 
+        tore_study_time, 
+        nurbo_study_time,
+        shokha_score, 
+        tore_score, 
+        nurbo_score
+    } = useContext(StateContext)
+
     const [shokhaStudyTime, setShokhaStudyTime] = shokha_study_time
     const [toreStudyTime, setToreStudyTime] = tore_study_time
     const [nurboStudyTime, setNurboStudyTime] = nurbo_study_time
+    const [shokhaScore, setShokhaScore] = shokha_score
+    const [toreScore, setToreScore] = tore_score
+    const [nurboScore, setNurboScore] = nurbo_score
+
+    const updateScores = () => {
+        setShokhaScore(localStorage.getItem('shokhaScore'))
+        setToreScore(localStorage.getItem('toreScore'))
+        setNurboScore(localStorage.getItem('nurboScore'))
+    }
 
     const updateStudyTime = (event) => {
 
         event.preventDefault()
+
+        console.log(localStorage);
 
         const hoursInput = document.getElementById('hours')
         const minutesInput = document.getElementById('minutes')
@@ -23,11 +44,46 @@ const StudyTimeUpdateForm = () => {
         localStorage.setItem(contester, hours * 60 + minutes)
 
         if (contester === 'shokha_study_time') {
-            setShokhaStudyTime(`${hours} hs ${minutes} mins`)
+
+            if (localStorage.getItem('toreReported') && localStorage.getItem('nurboReported')) {
+                updateLocalStorageScores()
+                updateScores()
+                setShokhaStudyTime('')
+                setToreStudyTime('')
+                setNurboStudyTime('')
+                setAllReportsFalse()
+                setAllStudyTimesEmpty()
+            } else {
+                setShokhaStudyTime(`${hours} hs ${minutes} mins`)
+                localStorage.setItem('shokhaReported', true)
+            }
+
         } else if (contester === 'tore_study_time') {
-            setToreStudyTime(`${hours} hs ${minutes} mins`)
+
+            if (localStorage.getItem('shokhaReported') && localStorage.getItem('nurboReported')) {
+                updateLocalStorageScores()
+                updateScores()
+                setShokhaStudyTime('')
+                setToreStudyTime('')
+                setNurboStudyTime('')
+                setAllReportsFalse()
+            } else {
+                setToreStudyTime(`${hours} hs ${minutes} mins`)
+                localStorage.setItem('toreReported', true)
+            }
+
         } else {
-            setNurboStudyTime(`${hours} hs ${minutes} mins`)
+            if (localStorage.getItem('toreReported') && localStorage.getItem('shokhaReported')) {
+                updateLocalStorageScores()
+                updateScores()
+                setShokhaStudyTime('')
+                setToreStudyTime('')
+                setNurboStudyTime('')
+                setAllReportsFalse()
+            } else {
+                setNurboStudyTime(`${hours} hs ${minutes} mins`)
+                localStorage.setItem('nurboReported', true)
+            }
         }
 
         hoursInput.value = ""
